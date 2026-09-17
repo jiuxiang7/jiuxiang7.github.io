@@ -5,7 +5,7 @@
  *
  * 图片取自当前文章的素材文件夹（source/_posts/<文章名>/）。
  * 宽度支持 % / px / em / rem / vw，只写数字按百分比处理；省略则撑满正文宽度。
- * 带注释时图片在左、注释在右；不带注释时按指定宽度居中显示。
+ * 带注释时注释显示在图片下方，字号比正文小一号；图片始终水平居中。
  */
 
 const urlFor = require('hexo-util').url_for.bind(hexo);
@@ -45,19 +45,10 @@ hexo.extend.tag.register('imgtext', function (args) {
   if (!asset) return '';
 
   const src = encodeURL(urlFor(asset.path));
-  const alt = escapeHtml(caption);
-
-  if (caption) {
-    return '<div class="post-img-row">'
-      + '<div class="post-img-row__pic" style="--pic-size:' + (width || '55%') + '">'
-      + '<img src="' + src + '" alt="' + alt + '" loading="lazy">'
-      + '</div>'
-      + '<div class="post-img-row__text">' + escapeHtml(caption) + '</div>'
-      + '</div>';
-  }
-
   const style = width ? ' style="--img-width:' + width + '"' : '';
-  return '<div class="post-img-single"' + style + '>'
-    + '<img src="' + src + '" alt="" loading="lazy">'
+
+  return '<div class="post-img-figure"' + style + '>'
+    + '<img src="' + src + '" alt="' + escapeHtml(caption) + '" loading="lazy">'
+    + (caption ? '<div class="post-img-caption">' + escapeHtml(caption) + '</div>' : '')
     + '</div>';
 }, { ends: false });

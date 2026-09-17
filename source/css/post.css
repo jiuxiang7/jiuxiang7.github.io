@@ -1,51 +1,20 @@
-/* 正文图片：单张，可指定宽度，默认居中 */
-.post-img-single {
+/* 正文图片：图片居中，注释在图片下方，字号比正文小一号 */
+.post-img-figure {
   width: var(--img-width, 100%);
   max-width: 100%;
   margin: 1.5em auto;
 }
 
-.post-img-single img {
+.post-img-figure img {
   display: block;
   width: 100%;
   margin: 0;
 }
 
-/* 正文图片：左图右注 */
-.post-img-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin: 1.5em 0;
-}
-
-.post-img-row__pic {
-  flex: 0 0 var(--pic-size, 55%);
-  min-width: 0;
-}
-
-.post-img-row__pic img {
-  display: block;
-  width: 100%;
-  margin: 0;
-}
-
-.post-img-row__text {
-  flex: 1 1 auto;
-  min-width: 0;
-  font-size: .95em;
-  line-height: 1.75;
+.post-img-caption {
+  margin-top: .6em;
+  font-size: .9em;
+  line-height: 1.7;
   color: var(--grey, #858585);
-}
-
-@media screen and (max-width: 768px) {
-  .post-img-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-
-  .post-img-row__pic {
-    flex: 0 0 auto;
-  }
+  text-align: center;
 }
