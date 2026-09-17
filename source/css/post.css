@@ -1,8 +1,8 @@
-/* 正文图片：图片居中，注释在图片下方，字号比正文小一号 */
+/* 正文图片：图片居中，注释紧贴图片下方，字号比正文小一号 */
 .post-img-figure {
   width: var(--img-width, 100%);
   max-width: 100%;
-  margin: 1.5em auto;
+  margin: 1.2em auto;
 }
 
 .post-img-figure img {
@@ -12,9 +12,9 @@
 }
 
 .post-img-caption {
-  margin-top: .6em;
+  margin-top: .3em;
   font-size: .9em;
-  line-height: 1.7;
+  line-height: 1.6;
   color: var(--grey, #858585);
   text-align: center;
 }
