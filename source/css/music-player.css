@@ -1,0 +1,212 @@
+#local-music-player {
+  --mc-accent: var(--btn-bg, #49b1f5);
+  --mc-track: var(--light-grey, #e6e9ef);
+}
+
+#local-music-player .mc-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+#local-music-player .mc-cd {
+  position: relative;
+  flex: 0 0 auto;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, .92) 0 7px, rgba(255, 255, 255, 0) 8px),
+    conic-gradient(from 0deg, #ccd6e6, #f4f7fc, #c6d1e3, #eef3fb, #ccd6e6, #dfe7f3, #ccd6e6);
+  box-shadow: 0 2px 8px rgba(20, 30, 60, .16), inset 0 0 0 1px rgba(255, 255, 255, .6);
+  animation: mc-spin 9s linear infinite;
+  animation-play-state: paused;
+}
+
+#local-music-player .mc-cd::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: var(--card-bg, #fff);
+  box-shadow: inset 0 0 0 3px #dbe3f0;
+}
+
+#local-music-player.is-playing .mc-cd {
+  animation-play-state: running;
+}
+
+@keyframes mc-spin {
+  to { transform: rotate(360deg); }
+}
+
+#local-music-player .mc-right {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#local-music-player .mc-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--font-color, #4c4948);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#local-music-player .mc-artist {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--grey, #858585);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#local-music-player .mc-time {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--grey, #858585);
+  font-variant-numeric: tabular-nums;
+}
+#local-music-player .mc-progress {
+  display: block;
+  width: 100%;
+  height: 4px;
+  margin: 6px 0 10px;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(
+    to right,
+    var(--mc-accent) 0%,
+    var(--mc-accent) var(--mc-progress, 0%),
+    var(--mc-track) var(--mc-progress, 0%),
+    var(--mc-track) 100%);
+}
+
+#local-music-player .mc-progress::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 11px;
+  height: 11px;
+  border: none;
+  border-radius: 50%;
+  background: var(--mc-accent);
+  cursor: pointer;
+}
+
+#local-music-player .mc-progress::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border: none;
+  border-radius: 50%;
+  background: var(--mc-accent);
+  cursor: pointer;
+}
+
+#local-music-player .mc-progress::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: transparent;
+}
+
+#local-music-player .mc-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+#local-music-player .mc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--mc-track);
+  color: var(--font-color, #4c4948);
+  cursor: pointer;
+  transition: background-color .2s, color .2s, transform .2s;
+}
+
+#local-music-player .mc-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+#local-music-player .mc-btn:hover {
+  background: var(--mc-accent);
+  color: #fff;
+}
+
+#local-music-player .mc-btn:active {
+  transform: scale(.94);
+}
+
+#local-music-player .mc-play {
+  width: 36px;
+  height: 36px;
+  background: var(--mc-accent);
+  color: #fff;
+}
+
+#local-music-player .mc-play svg {
+  width: 16px;
+  height: 16px;
+}
+
+#local-music-player .mc-hint {
+  display: none;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--grey, #858585);
+  text-align: center;
+}
+
+#local-music-player .mc-progress:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+#local-music-player .mc-progress:disabled::-webkit-slider-thumb {
+  opacity: 0;
+}
+
+#local-music-player .mc-progress:disabled::-moz-range-thumb {
+  opacity: 0;
+}
+
+#local-music-player .mc-btn:disabled {
+  opacity: .4;
+  cursor: default;
+}
+
+#local-music-player .mc-btn:disabled:hover {
+  background: var(--mc-track);
+  color: var(--font-color, #4c4948);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #local-music-player .mc-cd {
+    animation: none;
+  }
+}
