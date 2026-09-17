@@ -3,12 +3,27 @@
 
   var PLAYLIST_URL = '/music/playlist.json';
   var HISTORY_KEY = 'music-play-history';
-  var DEFAULT_VOLUME = 0.7;
+  var VOLUME = 0.7;
+  var CARD_ID = 'local-music-player';
+  var DEFAULT_HINT = '点击页面任意位置开始播放';
 
   var ICON_PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="8,5 20,12 8,19"></polygon></svg>';
   var ICON_PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="5" width="3.4" height="14" rx="1"></rect><rect x="13.6" y="5" width="3.4" height="14" rx="1"></rect></svg>';
   var ICON_PREV = '<svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,6 12,18 2,12"></polygon><polygon points="22,6 22,18 12,12"></polygon></svg>';
   var ICON_NEXT = '<svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="2,6 2,18 12,12"></polygon><polygon points="12,6 12,18 22,12"></polygon></svg>';
+
+  // 全局单例：站点内部换页（pjax）时只替换 #body-wrap，audio 挂到 body 上不会被销毁
+  var store = {
+    tracks: null,
+    audio: null,
+    history: [],
+    current: -1,
+    unlocked: false,
+    showHint: false,
+    message: '',
+    errorCount: 0,
+    ui: null
+  };
 
   function ready(fn) {
     if (document.readyState === 'loading') {
@@ -26,16 +41,6 @@
     var mm = (hours > 0 && minutes < 10 ? '0' : '') + minutes;
     var ss = (secs < 10 ? '0' : '') + secs;
     return hours > 0 ? hours + ':' + mm + ':' + ss : mm + ':' + ss;
-  }
-
-  function makeButton(className, icon, label) {
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = className;
-    btn.title = label;
-    btn.setAttribute('aria-label', label);
-    btn.innerHTML = icon;
-    return btn;
   }
 
   function pickRandom(total, exclude) {
@@ -68,12 +73,183 @@
     }
   }
 
-  function build(tracks) {
+  function makeButton(className, icon, label) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = className;
+    btn.title = label;
+    btn.setAttribute('aria-label', label);
+    btn.innerHTML = icon;
+    return btn;
+  }
+
+  function currentTrack() {
+    return store.tracks ? store.tracks[store.current] : null;
+  }
+
+  function updateSeekable() {
+    var ui = store.ui;
+    var audio = store.audio;
+    if (!ui || !audio) return;
+    var seekable = false;
+    try {
+      seekable = !!(audio.seekable && audio.seekable.length > 0 && audio.seekable.end(0) > 0);
+    } catch (e) {
+      seekable = false;
+    }
+    ui.bar.disabled = !seekable;
+    ui.card.classList.toggle('is-seekable', seekable);
+  }
+
+  function syncUI() {
+    var ui = store.ui;
+    var audio = store.audio;
+    var track = currentTrack();
+    if (!ui || !audio || !track) return;
+
+    var known = !!(audio.duration && isFinite(audio.duration));
+    var ratio = known ? audio.currentTime / audio.duration : 0;
+    var playing = !audio.paused;
+
+    ui.title.textContent = track.name || '';
+    ui.artist.textContent = track.artist || '';
+    ui.artist.style.display = track.artist ? '' : 'none';
+    ui.current.textContent = formatTime(audio.currentTime);
+    ui.duration.textContent = formatTime(audio.duration);
+    ui.bar.value = String(Math.round(ratio * 1000));
+    ui.bar.style.setProperty('--mc-progress', (ratio * 100) + '%');
+    ui.play.innerHTML = playing ? ICON_PAUSE : ICON_PLAY;
+    ui.play.setAttribute('aria-label', playing ? '暂停' : '播放');
+    ui.play.title = playing ? '暂停' : '播放';
+    ui.prev.disabled = store.history.length < 2;
+    ui.card.classList.toggle('is-playing', playing);
+    ui.hint.textContent = store.message || DEFAULT_HINT;
+    ui.hint.style.display = store.showHint ? 'block' : 'none';
+    updateSeekable();
+  }
+
+  function stopWatching() {
+    document.removeEventListener('click', unlock);
+    document.removeEventListener('keydown', unlock);
+    document.removeEventListener('touchstart', unlock);
+  }
+
+  function markUnlocked() {
+    if (store.unlocked) return;
+    store.unlocked = true;
+    store.showHint = false;
+    stopWatching();
+  }
+
+  function tryPlay() {
+    var audio = store.audio;
+    if (!audio) return;
+    var promise = audio.play();
+    if (promise && typeof promise.catch === 'function') {
+      promise.catch(function () {
+        if (!store.unlocked) {
+          store.showHint = true;
+          syncUI();
+        }
+      });
+    }
+  }
+
+  function unlock(event) {
+    if (store.unlocked) return;
+    var ui = store.ui;
+    if (event && event.target && ui && ui.card.contains(event.target)) return;
+    markUnlocked();
+    syncUI();
+    tryPlay();
+  }
+
+  function loadCurrent() {
+    var audio = store.audio;
+    var track = currentTrack();
+    if (!audio || !track) return;
+    audio.src = track.url;
+    syncUI();
+    tryPlay();
+  }
+
+  function goTo(index, record) {
+    store.current = index;
+    if (record) {
+      store.history.push(index);
+      saveHistory(store.history);
+    }
+    loadCurrent();
+  }
+
+  function goNext() {
+    goTo(pickRandom(store.tracks.length, store.current), true);
+  }
+
+  function goPrev() {
+    if (store.history.length < 2) return;
+    store.history.pop();
+    var prev = store.history[store.history.length - 1];
+    if (prev === store.current) {
+      syncUI();
+      return;
+    }
+    goTo(prev, false);
+  }
+
+  function bindUI(ui) {
+    ui.play.addEventListener('click', function () {
+      markUnlocked();
+      if (store.audio.paused) {
+        tryPlay();
+      } else {
+        store.audio.pause();
+      }
+      syncUI();
+    });
+
+    ui.next.addEventListener('click', function () {
+      markUnlocked();
+      store.errorCount = 0;
+      goNext();
+    });
+
+    ui.prev.addEventListener('click', function () {
+      markUnlocked();
+      store.errorCount = 0;
+      goPrev();
+    });
+
+    var seek = function () {
+      var audio = store.audio;
+      var ratio = Number(ui.bar.value) / 1000;
+      ui.bar.style.setProperty('--mc-progress', (ratio * 100) + '%');
+      if (audio.duration && isFinite(audio.duration)) {
+        var target = ratio * audio.duration;
+        audio.currentTime = target;
+        ui.current.textContent = formatTime(target);
+      }
+    };
+
+    ui.bar.addEventListener('input', seek);
+    ui.bar.addEventListener('change', seek);
+  }
+
+  function mount() {
+    if (!store.tracks || !store.tracks.length) return;
+    if (store.ui && document.contains(store.ui.card)) {
+      syncUI();
+      return;
+    }
+
     var aside = document.querySelector('.aside-content');
-    if (!aside || document.getElementById('local-music-player')) return;
+    if (!aside) return;
+
+    var old = document.getElementById(CARD_ID);
+    if (old && old.parentNode) old.parentNode.removeChild(old);
 
     var card = document.createElement('div');
-    card.id = 'local-music-player';
+    card.id = CARD_ID;
     card.className = 'card-widget card-music';
 
     var body = document.createElement('div');
@@ -95,10 +271,8 @@
     timeRow.className = 'mc-time';
     var currentEl = document.createElement('span');
     currentEl.className = 'mc-time-current';
-    currentEl.textContent = '00:00';
     var durationEl = document.createElement('span');
     durationEl.className = 'mc-time-total';
-    durationEl.textContent = '00:00';
     timeRow.appendChild(currentEl);
     timeRow.appendChild(durationEl);
 
@@ -132,7 +306,6 @@
 
     var hint = document.createElement('div');
     hint.className = 'mc-hint';
-    hint.textContent = '点击页面任意位置开始播放';
     card.appendChild(hint);
 
     var anchor = document.querySelector('.aside-content .card-info') || aside.firstElementChild;
@@ -142,201 +315,95 @@
       aside.insertBefore(card, aside.firstChild);
     }
 
+    store.ui = {
+      card: card,
+      title: titleEl,
+      artist: artistEl,
+      current: currentEl,
+      duration: durationEl,
+      bar: bar,
+      play: playBtn,
+      prev: prevBtn,
+      next: nextBtn,
+      hint: hint
+    };
+
+    bindUI(store.ui);
+    syncUI();
+  }
+
+  function initAudio() {
+    if (store.audio) return;
+
     var audio = new Audio();
     audio.preload = 'auto';
-    audio.volume = DEFAULT_VOLUME;
-    audio.controls = false;
-    card.appendChild(audio);
-
-    var history = readHistory(tracks.length);
-    var current = pickRandom(tracks.length, -1);
-    var unlocked = false;
-    var errorCount = 0;
-
-    function paint(percent) {
-      var value = Math.max(0, Math.min(100, percent));
-      bar.style.setProperty('--mc-progress', value + '%');
-    }
-
-    function stopWatching() {
-      document.removeEventListener('click', unlock);
-      document.removeEventListener('keydown', unlock);
-      document.removeEventListener('touchstart', unlock);
-    }
-
-    function markUnlocked() {
-      if (unlocked) return;
-      unlocked = true;
-      stopWatching();
-      hint.style.display = 'none';
-    }
-
-    function tryPlay() {
-      var promise = audio.play();
-      if (promise && typeof promise.catch === 'function') {
-        promise.catch(function () {
-          if (!unlocked) hint.style.display = 'block';
-        });
-      }
-    }
-
-    function goTo(index, record) {
-      current = index;
-      if (record) {
-        history.push(index);
-        saveHistory(history);
-      }
-      var track = tracks[index];
-      titleEl.textContent = track.name || '未知曲目';
-      artistEl.textContent = track.artist || '';
-      artistEl.style.display = track.artist ? '' : 'none';
-      currentEl.textContent = '00:00';
-      durationEl.textContent = '00:00';
-      bar.value = '0';
-      paint(0);
-      updatePrevState();
-      audio.src = track.url;
-      tryPlay();
-    }
-
-    function goNext() {
-      goTo(pickRandom(tracks.length, current), true);
-    }
-
-    function goPrev() {
-      if (history.length < 2) return;
-      history.pop();
-      var prev = history[history.length - 1];
-      if (prev === current) {
-        updatePrevState();
-        return;
-      }
-      goTo(prev, false);
-    }
-
-    function unlock(event) {
-      if (unlocked) return;
-      if (event && event.target && card.contains(event.target)) return;
-      markUnlocked();
-      tryPlay();
-    }
-
-    playBtn.addEventListener('click', function () {
-      markUnlocked();
-      if (audio.paused) {
-        tryPlay();
-      } else {
-        audio.pause();
-      }
-    });
-
-    nextBtn.addEventListener('click', function () {
-      markUnlocked();
-      errorCount = 0;
-      goNext();
-    });
-
-    prevBtn.addEventListener('click', function () {
-      markUnlocked();
-      errorCount = 0;
-      goPrev();
-    });
-
-    bar.addEventListener('input', function () {
-      var ratio = Number(bar.value) / 1000;
-      paint(ratio * 100);
-      if (audio.duration && isFinite(audio.duration)) {
-        var target = ratio * audio.duration;
-        currentEl.textContent = formatTime(target);
-        audio.currentTime = target;
-      }
-    });
-
-    bar.addEventListener('change', function () {
-      var ratio = Number(bar.value) / 1000;
-      if (audio.duration && isFinite(audio.duration)) {
-        var target = ratio * audio.duration;
-        currentEl.textContent = formatTime(target);
-        audio.currentTime = target;
-      }
-    });
-
-    audio.addEventListener('loadedmetadata', function () {
-      durationEl.textContent = formatTime(audio.duration);
-    });
+    audio.volume = VOLUME;
+    audio.setAttribute('data-mc-audio', '');
+    document.body.appendChild(audio);
+    store.audio = audio;
 
     audio.addEventListener('play', function () {
-      card.classList.add('is-playing');
-      playBtn.innerHTML = ICON_PAUSE;
-      playBtn.setAttribute('aria-label', '暂停');
-      playBtn.title = '暂停';
-      hint.style.display = 'none';
-      errorCount = 0;
+      store.showHint = false;
+      store.message = '';
+      store.errorCount = 0;
+      syncUI();
     });
-
-    audio.addEventListener('pause', function () {
-      card.classList.remove('is-playing');
-      playBtn.innerHTML = ICON_PLAY;
-      playBtn.setAttribute('aria-label', '播放');
-      playBtn.title = '播放';
-    });
-
-    audio.addEventListener('timeupdate', function () {
-      currentEl.textContent = formatTime(audio.currentTime);
-      if (!audio.duration || !isFinite(audio.duration)) return;
-      bar.value = String(Math.round((audio.currentTime / audio.duration) * 1000));
-      paint((audio.currentTime / audio.duration) * 100);
-    });
-
-    audio.addEventListener('ended', function () {
-      goNext();
-    });
-
+    audio.addEventListener('pause', syncUI);
+    audio.addEventListener('timeupdate', syncUI);
+    audio.addEventListener('loadedmetadata', syncUI);
+    audio.addEventListener('durationchange', syncUI);
+    audio.addEventListener('progress', updateSeekable);
+    audio.addEventListener('canplay', updateSeekable);
+    audio.addEventListener('ended', goNext);
     audio.addEventListener('error', function () {
-      errorCount += 1;
-      if (errorCount < tracks.length) {
+      store.errorCount += 1;
+      if (store.errorCount < store.tracks.length) {
         goNext();
         return;
       }
-      card.classList.remove('is-playing');
-      hint.textContent = '音频无法播放，请检查文件格式';
-      hint.style.display = 'block';
+      store.message = '音频无法播放，请检查文件格式';
+      store.showHint = true;
+      syncUI();
     });
 
-    function updateSeekable() {
-      var seekable = false;
-      try {
-        seekable = !!(audio.seekable && audio.seekable.length > 0 && audio.seekable.end(0) > 0);
-      } catch (e) {
-        seekable = false;
-      }
-      bar.disabled = !seekable;
-      card.classList.toggle('is-seekable', seekable);
-    }
-
-    function updatePrevState() {
-      prevBtn.disabled = history.length < 2;
-    }
-
-    audio.addEventListener('loadedmetadata', updateSeekable);
-    audio.addEventListener('durationchange', updateSeekable);
-    audio.addEventListener('progress', updateSeekable);
-    audio.addEventListener('canplay', updateSeekable);
     document.addEventListener('click', unlock);
     document.addEventListener('keydown', unlock);
     document.addEventListener('touchstart', unlock);
-
-    history.push(current);
-    saveHistory(history);
-    goTo(current, false);
   }
 
-  ready(function () {
+  function boot() {
+    if (store.tracks) {
+      mount();
+      return;
+    }
+
     fetch(PLAYLIST_URL)
       .then(function (res) { return res.ok ? res.json() : []; })
       .then(function (tracks) {
-        if (tracks && tracks.length) build(tracks);
+        if (!tracks || !tracks.length) return;
+        store.tracks = tracks;
+        store.history = readHistory(tracks.length);
+        initAudio();
+        store.current = pickRandom(tracks.length, -1);
+        store.history.push(store.current);
+        saveHistory(store.history);
+        mount();
+        loadCurrent();
       })
       .catch(function () {});
+  }
+
+  ready(boot);
+
+  // pjax 换页：内容区会被整体替换，音频不动，只需重新挂载界面
+  document.addEventListener('pjax:send', function () {
+    var old = document.getElementById(CARD_ID);
+    if (old && old.parentNode) old.parentNode.removeChild(old);
+    store.ui = null;
+  });
+
+  document.addEventListener('pjax:complete', function () {
+    mount();
+    syncUI();
   });
 })();

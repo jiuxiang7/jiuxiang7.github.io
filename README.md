@@ -45,6 +45,21 @@ npx hexo new "标题"    # 新建文章，写入 source/_posts/
 
 之后每次 `git push` 都会自动重新发布，不需要手动执行任何部署命令。
 
+## 日常更新文章
+
+```powershell
+cd "D:\Coding\博客"
+npx hexo new "文章标题"      # 生成 source/_posts/文章标题.md，写完保存
+npm run build                # 可选，本地检查一遍
+git add -A
+git commit -m "新增文章：文章标题"
+git push
+```
+
+推送后 GitHub Actions 会自动构建部署，一到两分钟后刷新 https://blog.gwpp.beauty 就能看到。
+
+如果改了 `_config.yml` 之类的配置，或者文章里图片不显示，先跑 `npm run clean` 再 `npm run build`：Hexo 会缓存渲染结果，配置变更后不清缓存可能不生效。
+
 ## 绑定自己的域名
 
 1. 在仓库 **Settings → Pages → Custom domain** 填入 `blog.gwpp.beauty` 并保存。仓库里已有 `source/CNAME`，内容与之一致即可。

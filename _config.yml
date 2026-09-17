@@ -3,10 +3,10 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: 九湘的博客
-subtitle: '记录 · 思考 · 分享'
-description: '一个用 Hexo 搭建的个人博客，记录技术、阅读与生活。'
-keywords: 博客,技术,笔记,随笔
+title: jiuxiang
+subtitle: '博客'
+description: '戏里繁华戏外江山，你的美只愿岁月看得见'
+keywords: 博客
 author: 九湘
 language: zh-CN
 timezone: 'Asia/Shanghai'
@@ -40,7 +40,7 @@ external_link:
   exclude: ''
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
+post_asset_folder: true
 relative_link: false
 future: true
 syntax_highlighter: highlight.js

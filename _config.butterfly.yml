@@ -206,7 +206,7 @@ toc:
   expand: false
   # Only for post
   style_simple: false
-  scroll_percent: true
+  scroll_percent: false
 
 post_copyright:
   enable: true
@@ -997,7 +997,7 @@ note:
 
 # https://github.com/MoOx/pjax
 pjax:
-  enable: false
+  enable: true
   # Exclude the specified pages from pjax, such as '/music/'
   exclude:
     # - /xxxxxx/
