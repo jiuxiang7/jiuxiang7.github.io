@@ -1067,6 +1067,7 @@ css_prefix: true
 inject:
   head:
     - <link rel="stylesheet" href="/css/music-player.css">
+    - <link rel="stylesheet" href="/css/post.css">
   bottom:
     - <script src="/js/music-player.js" defer></script>
 

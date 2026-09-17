@@ -86,6 +86,27 @@ git push
 - **代码高亮样式**：改 `code_blocks.theme`，可选 `darker` / `pale night` / `light` / `ocean`。
 - **首页大横幅**：`disable_top_img: true` 时首页直接显示文章列表（当前已开启）。（`search.use: local_search`），依赖根目录 `_config.yml` 里的 `search` 段。
 
+## 正文图片
+
+图片放在 `source/_posts/<文章名>/` 里（`npx hexo new` 会自动建好这个文件夹）。
+
+需要控制宽度、或者把注释放在图片右侧时，用自定义标签：
+
+```
+{% imgtext 图片名 [宽度] [注释文字] %}
+```
+
+| 写法 | 效果 |
+| --- | --- |
+| `{% imgtext pic1.jpg %}` | 宽度撑满正文，居中 |
+| `{% imgtext pic1.jpg 60% %}` | 宽度为正文的 60%，居中 |
+| `{% imgtext pic1.jpg 60% 这里是注释 %}` | 图片在左占 60%，注释文字排在右侧 |
+| `{% imgtext pic1.jpg 300px 注释 %}` | 宽度用像素，注释同样在右侧 |
+
+宽度支持 `%`、`px`、`em`、`rem`、`vw`，只写数字按百分比处理。注释里有空格时用引号包起来：`{% imgtext pic1.jpg 60% "带 空格 的注释" %}`。屏幕宽度小于 768px 时图文自动改为上下排列。
+
+不需要控制宽度时，Hexo 自带的 `{% asset_img 图片名 %}` 仍然可用。
+
 ## 目录结构
 
 ```
