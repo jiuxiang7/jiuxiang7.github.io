@@ -1,5 +1,5 @@
 ---
-title: uestc-in-poem
+title: 论古诗中的电子科技大学
 date: 2026-09-18 11:04:47
 tags:
   - UESTC
