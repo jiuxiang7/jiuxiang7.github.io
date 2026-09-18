@@ -293,7 +293,7 @@ aside:
     category: true
   card_author:
     enable: true
-    description: 一个在这里记录技术与生活的人。
+    description: 唤起一天明月，照我满怀冰雪，浩荡百川流
     button:
       enable: true
       icon: fab fa-github
