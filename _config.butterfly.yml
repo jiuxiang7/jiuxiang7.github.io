@@ -1068,8 +1068,10 @@ inject:
   head:
     - <link rel="stylesheet" href="/css/music-player.css?v=1">
     - <link rel="stylesheet" href="/css/post.css?v=1">
+    - <link rel="stylesheet" href="/css/toc.css?v=1">
   bottom:
     - <script src="/js/music-player.js?v=1" defer></script>
+    - <script src="/js/toc-toggle.js?v=2" defer></script>
 
 # CDN Settings
 # Don't modify the following settings unless you know how they work

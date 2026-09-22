@@ -1,0 +1,48 @@
+/* 目录：带子目录的条目右侧显示折叠箭头（纯 CSS 画出的尖角） */
+#card-toc .toc-item.has-child {
+  position: relative;
+}
+
+#card-toc .toc-item.has-child > .toc-link {
+  padding-right: 22px;
+}
+
+#card-toc .toc-toggle {
+  position: absolute;
+  right: 0;
+  top: .2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color .2s;
+}
+
+#card-toc .toc-toggle i {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-right: 1.6px solid var(--grey, #858585);
+  border-bottom: 1.6px solid var(--grey, #858585);
+  transform: rotate(45deg);
+  transition: transform .2s, border-color .2s;
+}
+
+#card-toc .toc-toggle:hover {
+  background: var(--light-grey, #eee);
+}
+
+#card-toc .toc-toggle:hover i {
+  border-color: var(--btn-bg, #49b1f5);
+}
+
+#card-toc .toc-item.toc-collapsed .toc-toggle i {
+  transform: rotate(-45deg);
+}
+
+#card-toc .toc-item.toc-collapsed > .toc-child {
+  display: none;
+}
