@@ -1,8 +1,6 @@
 ---
 title: 你好，世界
 date: 2026-09-16 21:00:00
-tags:
-  - 开始
 categories:
   - 随笔
 description: 第一篇文章，聊聊这个博客是怎么搭起来的。
