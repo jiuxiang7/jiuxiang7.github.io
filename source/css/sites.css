@@ -1,0 +1,204 @@
+/* 我的站点：/sites/ 页面里的卡片列表 */
+.my-sites {
+  --site-accent: var(--default-bg-color, #49b1f5);
+  margin: 1.6em 0 .4em;
+}
+
+.my-sites-group + .my-sites-group {
+  margin-top: 2.4em;
+}
+
+.my-sites-head {
+  margin-bottom: 14px;
+}
+
+.my-sites-title {
+  position: relative;
+  margin: 0 0 6px;
+  padding: 0;
+  font-size: 1.15em;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--font-color);
+}
+
+/* 去掉主题给文章标题加的图标和左内边距 */
+.my-sites-title::before {
+  content: none;
+}
+
+.my-sites-desc {
+  margin: 0;
+  font-size: .88em;
+  line-height: 1.6;
+  color: var(--card-meta, #858585);
+}
+
+.my-sites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 14px;
+}
+
+.my-sites-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  color: var(--font-color) !important;
+  text-decoration: none !important;
+  background: var(--card-bg);
+  border: 1px solid rgba(127, 127, 127, .18);
+  border-radius: 12px;
+  box-shadow: var(--card-box-shadow);
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+.my-sites-card:hover,
+.my-sites-card:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--site-accent);
+  box-shadow: var(--card-hover-box-shadow);
+  text-decoration: none !important;
+}
+
+.my-sites-card:focus-visible {
+  outline: 2px solid var(--site-accent);
+  outline-offset: 3px;
+}
+
+.my-sites-icon {
+  position: relative;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: 11px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  color: #fff;
+  background: var(--site-accent);
+  box-shadow: 0 3px 8px rgba(73, 177, 245, .28);
+}
+
+.my-sites-icon .my-sites-letter {
+  line-height: 1;
+}
+
+/* 图片图标盖住首字；加载失败时脚本会移除图片 */
+.my-sites-icon .my-sites-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+  object-fit: cover;
+  background: var(--card-bg);
+}
+
+.my-sites-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.my-sites-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.my-sites-name {
+  overflow: hidden;
+  font-size: 1em;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--font-color);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.my-sites-domain {
+  flex: 0 0 auto;
+  overflow: hidden;
+  font-size: .78em;
+  line-height: 1.45;
+  color: var(--card-meta, #858585);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.my-sites-text {
+  display: -webkit-box;
+  margin-top: 4px;
+  overflow: hidden;
+  font-size: .86em;
+  line-height: 1.6;
+  color: var(--card-meta, #858585);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.my-sites-go {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: var(--card-meta, #858585);
+  background: transparent;
+  transition: color .25s ease, background-color .25s ease, transform .25s ease;
+}
+
+.my-sites-go svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.my-sites-card:hover .my-sites-go,
+.my-sites-card:focus-visible .my-sites-go {
+  color: #fff;
+  background: var(--site-accent);
+  transform: translate(2px, -2px);
+}
+
+@media (max-width: 600px) {
+  .my-sites-card {
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .my-sites-domain {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .my-sites-card,
+  .my-sites-go {
+    transition: none;
+  }
+
+  .my-sites-card:hover,
+  .my-sites-card:focus-visible {
+    transform: none;
+  }
+
+  .my-sites-card:hover .my-sites-go,
+  .my-sites-card:focus-visible .my-sites-go {
+    transform: none;
+  }
+}

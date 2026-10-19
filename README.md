@@ -107,17 +107,43 @@ git push
 
 不需要控制宽度时，Hexo 自带的 `{% asset_img 图片名 %}` 仍然可用。
 
+## 我的站点
+
+导航栏的「站点」（`/sites/`）用来放自己做过的其他网站和工具。内容都在
+`source/_data/sites.yml` 里，改完重新构建即可生效：
+
+```yaml
+- group: 在线工具
+  desc: 打开就能用，数据都留在你自己的浏览器里
+  links:
+    - name: 时间计算器
+      url: https://time.gwpp.beauty
+      desc: 日期差、日期推算、时间戳、公历农历、年龄计算，一个页面全搞定
+      icon: fas fa-clock
+```
+
+- `group` 是分组名称，`desc` 是分组说明，都可以按需增删。
+- `links` 下每个站点必须有 `name` 和 `url`（要带 `https://`），`desc` 可省略。
+- `icon` 可以填 FontAwesome 类名（如 `fas fa-clock`），也可以填图片地址
+  （如 `/img/sites/time.png`）；不填时显示名称首字。
+- 想再加一组，就复制整个 `- group` 段；想加站点，就复制 `links` 下面那几行。
+
+卡片在构建时直接生成 HTML，不依赖前端 JS，深色模式和 pjax 换页都能直接生效；
+样式在 `source/css/sites.css`。
+
 ## 目录结构
 
 ```
 _config.yml              站点配置（标题、域名、插件）
 _config.butterfly.yml    主题配置（导航、外观、评论）
 source/_posts/           文章
+source/sites/            「我的站点」页面
+source/_data/sites.yml   我的站点数据
 source/about/            关于页
 scaffolds/               新建文章的模板
 .github/workflows/       GitHub Actions 自动部署
 source/music/            本地音乐文件（歌单自动生成）
-scripts/                 构建期插件（歌单生成器）
+scripts/                 构建期插件（歌单生成、我的站点卡片）
 public/                  构建产物，已被 git 忽略
 ```
 

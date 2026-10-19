@@ -1,0 +1,23 @@
+# 我的站点
+#
+# 页面地址：/sites/（导航「站点」）。改完这里重新构建即可生效。
+#
+# 一组站点的格式如下。想再加一个分组，就把 - group 这一段整体复制一份改掉；
+# 想在同一个分组里加站点，就复制 links 下面那几行。
+#
+# group        分组名称
+# desc         分组说明（可省略）
+# links        站点列表
+#   name       站点名称（必填）
+#   url        站点地址（必填，要带 https://）
+#   desc       一句话介绍（可省略）
+#   icon       图标（可省略）：FontAwesome 类名，如 fas fa-clock；
+#              或图片地址，如 /img/sites/time.png。不填时显示名称首字。
+
+- group: 在线工具
+  desc: 打开就能用，数据都留在你自己的浏览器里
+  links:
+    - name: 时间计算器
+      url: https://time.gwpp.beauty
+      desc: 日期差、日期推算、时间戳、公历农历、年龄计算，一个页面全搞定
+      icon: fas fa-clock

@@ -26,6 +26,7 @@ menu:
   归档: /archives/ || fas fa-archive
   分类: /categories/ || fas fa-folder-open
   标签: /tags/ || fas fa-tags
+  站点: /sites/ || fas fa-compass
   友链: /link/ || fas fa-link
 
 # --------------------------------------
@@ -1070,6 +1071,7 @@ inject:
     - <link rel="stylesheet" href="/css/post.css?v=1">
     - <link rel="stylesheet" href="/css/toc.css?v=3">
     - <link rel="stylesheet" href="/css/tags.css?v=2">
+    - <link rel="stylesheet" href="/css/sites.css?v=1">
   bottom:
     - <script src="/js/music-player.js?v=1" defer></script>
     - <script src="/js/toc-toggle.js?v=2" defer></script>
