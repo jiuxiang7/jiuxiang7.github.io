@@ -15,9 +15,22 @@
 #              或图片地址，如 /img/sites/time.png。不填时显示名称首字。
 
 - group: 在线工具
-  desc: 打开就能用，数据都留在你自己的浏览器里
+  # desc: 打开就能用，数据都留在你自己的浏览器里
   links:
     - name: 时间计算器
       url: https://time.gwpp.beauty
-      desc: 日期差、日期推算、时间戳、公历农历、年龄计算，一个页面全搞定
+      desc: 日期差、日期推算、时间戳、公历农历、年龄计算
       icon: fas fa-clock
+
+    - name: 夯到拉排序
+      url: https://hang.gwpp.beauty
+      desc: 上传图片，从夯到拉排序，导出图片
+      # icon: fas fa-clock
+
+- group: 小游戏
+  # desc: 打开就能用，数据都留在你自己的浏览器里
+  links:
+    - name: 科比霍金大冒险
+      url: https://adventure.gwpp.beauty
+      desc: 对古早小游戏进行了重置
+      icon: far fa-helicopter
