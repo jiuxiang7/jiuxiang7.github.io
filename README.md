@@ -48,7 +48,6 @@ npx hexo new "标题"    # 新建文章，写入 source/_posts/
 ## 日常更新文章
 
 ```powershell
-cd "D:\Coding\博客"
 npx hexo new "文章标题"      # 生成 source/_posts/文章标题.md，写完保存
 npm run build                # 可选，本地检查一遍
 git add -A
