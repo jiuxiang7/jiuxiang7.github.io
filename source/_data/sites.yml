@@ -27,6 +27,10 @@
       desc: 上传图片，从夯到拉排序，导出图片
       # icon: fas fa-clock
 
+    - name: 填词器
+      url: https://lyrics.gwpp.beauty
+      desc: 输入歌词显示词格
+
 - group: 小游戏
   # desc: 打开就能用，数据都留在你自己的浏览器里
   links:
