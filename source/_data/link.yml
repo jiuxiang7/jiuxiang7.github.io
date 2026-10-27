@@ -9,9 +9,13 @@
 # descr  一句话描述
 
 - class_name: 友情链接
-  # class_desc: 欢迎交换友链，可在评论区留言或发邮件给我
+  class_desc: 欢迎交换友链
   link_list:
     - name: Cain
       link: https://cainscain.github.io/
       avatar: https://cainscain.github.io/_astro/avatar.C4oYklyI_IAmHY.webp
-      descr: 这是一条示例友链，把它替换成你自己的就行
+      # descr: 这是一条示例友链，把它替换成你自己的就行
+
+    - name: ZXHYCZX
+      link: https://zxhyczx.github.io/blog/
+      avatar: https://zxhyczx.github.io/blog/_astro/avatar.DodcwRNI_a9jzn.webp
