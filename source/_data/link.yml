@@ -5,7 +5,7 @@
 #
 # name   站点名称
 # link   站点地址（要带 https://）
-# avatar 头像图片地址（填错会自动回退成默认头像）
+# avatar 头像图片地址（留空或加载失败时显示名称首字）
 # descr  一句话描述
 
 - class_name: 友情链接
@@ -20,3 +20,13 @@
       link: https://zxhyczx.github.io/blog/
       avatar: https://zxhyczx.github.io/blog/_astro/avatar.DodcwRNI_a9jzn.webp
       descr: 分享技术与生活
+
+    - name: 尺衡旦日
+      link: https://lingyu061126.github.io/
+      avatar: https://lingyu061126.github.io/images/Image_165853659272824.jpg
+      descr: 电气专业本科生 / 二次元重度依赖 / 有些不同于常人的想法 / 被理性所困
+
+    - name: Fat Old Eight
+      link: https://fat-old-eight.github.io/
+      avatar: https://s41.ax1x.com/2026/02/18/pZOgcFg.png
+      descr: 身囿果壳中，心为无限王。

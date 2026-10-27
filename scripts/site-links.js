@@ -1,11 +1,12 @@
 'use strict';
 
 /**
- * {% sites %}
- * 输出「我的站点」列表，数据来自 source/_data/sites.yml。
+ * {% sites %}        「我的站点」列表，数据来自 source/_data/sites.yml
+ * {% friendlinks %}  友链列表，数据来自 source/_data/link.yml
  *
- * 构建时直接生成 HTML，不依赖前端 JS，pjax 换页和深色模式都能直接生效。
- * 卡片样式在 source/css/sites.css。
+ * 两种列表共用同一套卡片（source/css/sites.css）：
+ * 「我的站点」按宽度自动排版，友链固定一行两个（窄屏一行一个）。
+ * 全部在构建时生成 HTML，不依赖前端 JS，pjax 换页和深色模式都能直接生效。
  */
 
 const ARROW_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true">'
@@ -40,7 +41,7 @@ function initialOf(name) {
   return /[a-z]/i.test(first) ? first.toUpperCase() : first;
 }
 
-function normalizeGroups(raw) {
+function normalizeSites(raw) {
   if (!Array.isArray(raw)) return [];
 
   return raw.map(function (group) {
@@ -60,6 +61,33 @@ function normalizeGroups(raw) {
     return {
       name: String(group.group || group.name || '').trim(),
       desc: String(group.desc || '').trim(),
+      links: links
+    };
+  }).filter(function (group) {
+    return group.links.length > 0;
+  });
+}
+
+function normalizeFriends(raw) {
+  if (!Array.isArray(raw)) return [];
+
+  return raw.map(function (group) {
+    const links = (Array.isArray(group.link_list) ? group.link_list : [])
+      .filter(function (link) {
+        return link && String(link.name || '').trim() && isHttpUrl(link.link);
+      })
+      .map(function (link) {
+        return {
+          name: String(link.name).trim(),
+          url: String(link.link).trim(),
+          desc: String(link.descr || '').trim(),
+          icon: String(link.avatar || '').trim()
+        };
+      });
+
+    return {
+      name: String(group.class_name || '').trim(),
+      desc: String(group.class_desc || '').trim(),
       links: links
     };
   }).filter(function (group) {
@@ -123,11 +151,19 @@ function renderGroup(group) {
     + '</section>';
 }
 
-hexo.extend.tag.register('sites', function () {
-  const data = hexo.locals.get('data') || {};
-  const groups = normalizeGroups(data.sites);
-
+function renderList(groups, twoColumns) {
   if (!groups.length) return '';
 
-  return '<div class="my-sites">' + groups.map(renderGroup).join('') + '</div>';
+  const className = 'my-sites' + (twoColumns ? ' my-sites--two' : '');
+  return '<div class="' + className + '">' + groups.map(renderGroup).join('') + '</div>';
+}
+
+hexo.extend.tag.register('sites', function () {
+  const data = hexo.locals.get('data') || {};
+  return renderList(normalizeSites(data.sites), false);
+}, { ends: false });
+
+hexo.extend.tag.register('friendlinks', function () {
+  const data = hexo.locals.get('data') || {};
+  return renderList(normalizeFriends(data.link), true);
 }, { ends: false });
