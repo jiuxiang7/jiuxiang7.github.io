@@ -22,6 +22,11 @@
       desc: 日期差、日期推算、时间戳、公历农历、年龄计算
       icon: fas fa-clock
 
+    - name: 图片压缩
+      url: https://size.gwpp.beauty
+      desc: 上传图片/PDF文件，压缩至指定大小
+      # icon: fas fa-clock
+
     - name: 夯到拉排序
       url: https://hang.gwpp.beauty
       desc: 上传图片，从夯到拉排序，导出图片
@@ -34,7 +39,18 @@
 - group: 小游戏
   # desc: 打开就能用，数据都留在你自己的浏览器里
   links:
+    - name: 合成大奶龙（泥电版）
+      url: https://synthesis.gwpp.beauty
+      desc: 不觉得很神圣吗
+      # icon: fas fa-helicopter
+
     - name: 科比霍金大冒险
       url: https://adventure.gwpp.beauty
       desc: 对古早小游戏进行了重置
       icon: fas fa-helicopter
+
+- group: 杂项
+  links:
+    - name: 黄帝家谱
+      url: https://history.gwpp.beauty
+      desc: 根据史记修的黄帝老儿家谱
